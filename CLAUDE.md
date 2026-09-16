@@ -30,27 +30,69 @@ assume the shape — check that doc before wiring a sensor to a field.
 
 ## Status
 
-Bootstrap only (seeded 16 Sep 2026). No integration code yet.
+v0.1.0 shipped 16 Sep 2026: full integration (config flow + options flow, coordinator, sensors,
+stale binary sensor), tested, deployed to the live HA instance, and released on GitHub.
 
-## Open question — check before relying on it
+## Distribution — resolved
 
-**Whether HACS can install a custom integration from a *private* GitHub repo is unverified.**
-This repo is private. Verify HACS's private-repo support before promising HACS distribution to
-Kieren — if it can't, fall back to manual install (`custom_components/tidemark/` copied in by
-hand) or make the repo public.
+**This repo is public**, so HACS distribution as a custom repository is the target — no private-repo
+workaround needed. Kieren adds it in HACS as a custom repository pointing at this GitHub repo;
+HACS reads releases, so every version bump needs a matching tagged `gh release`.
+
+No brand icon: that needs a PR to the external `home-assistant/brands` repo, which isn't
+something a session here can do unattended. Revisit if wanted later.
 
 ## Scope
 
-- This repo: the HA custom integration only (`custom_components/tidemark/` once code exists),
-  `hacs.json`, `manifest.json`.
+- This repo: the HA custom integration only (`custom_components/tidemark/`), `hacs.json`,
+  `manifest.json`.
 - Not this repo: the collector itself, or any other consumer of its JSON (macOS widget,
   Windows tray) — those live in `kmbrimble/claude-usage-widget`.
 
+## Secrets
+
+Nothing credential-shaped is committed. The optional bearer token is entered live through the
+config flow / options flow and stored only in HA's own config-entry storage, never in this repo.
+Run a secret scan (`git grep` for bearer-looking strings, `HA_TOKEN`, `sk-or-`, JWT-shaped
+tokens) before every push — the repo being public raises the cost of a slip.
+
 ## Test and verify
 
-No test harness yet — add one (pytest + `pytest-homeassistant-custom-component` is the standard
-choice for HA custom integrations) when the first sensor lands.
+`cd custom_components/tidemark/.. && python3 -m venv .venv && .venv/bin/pip install
+pytest-homeassistant-custom-component` (slow — it resolves a matching `homeassistant` core; it's
+what pins the version below). Then `.venv/bin/python -m pytest tests/ -q`.
+
+**Known version gap:** this container's Python (3.11) caps pip's resolve at `homeassistant
+2024.3.3` (2024.4+ needs Python 3.12), while the live instance runs Core 2026.9.0. The test
+suite proves the entity/coordinator/config-flow logic against a snapshot fixture — it does
+**not** prove API compatibility with the 2.5-years-newer live core. The deploy step's log check
+is the real compatibility test; a clean local test run is necessary, not sufficient.
+
+Tests use a fixture (`tests/fixtures_snapshot.json`) captured from a live `curl` of the
+collector with the `series` arrays trimmed — re-capture it if the collector's JSON shape changes,
+don't hand-edit field names from memory.
 
 ## Deploy
 
-No deploy step yet beyond `git push origin main`.
+No CI. Live install is manual, following `/projects/ha-config/CLAUDE.md`'s API-not-browser
+discipline:
+
+1. Copy `custom_components/tidemark/` (excluding `__pycache__`) into `/ha-config/custom_components/`
+   on the HA config mount.
+2. `POST /api/config/core/check_config` (validates YAML, not this component — informational here).
+3. Restart via `homeassistant.restart`, poll `/api/config` until `state == "RUNNING"`.
+4. Check `system_log/list` over the websocket, filtered for `tidemark`, at WARNING and above —
+   not just ERROR. A `400` from the config-flow POST below means the import failed; read the log
+   before touching code.
+5. Create the config entry: `POST /api/config/config_entries/flow {"handler":"tidemark"}`, then
+   `POST` the host/port/token/interval to the returned `flow_id`.
+6. Verify entity states against a fresh `curl` of the collector, matched by `generated_at` (not
+   just close-enough percent values — the collector polls independently on its own cadence).
+
+Rollback if the install goes wrong: `rm -rf /ha-config/custom_components/tidemark` + restart.
+There's no "backup and restore" step here (ha-config's constraint #1 backup rule is for editing
+an existing file; this adds a new directory) — state that plainly rather than pretending one
+applies.
+
+Per-version release (every bump, not just v0.1.0): bump `manifest.json` version, tag
+`vX.Y.Z`, `gh release create` with notes, then HACS picks it up on the next check.

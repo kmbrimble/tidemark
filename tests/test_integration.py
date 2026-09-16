@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from aiohttp import ClientConnectionError
 from homeassistant.config_entries import SOURCE_USER
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
@@ -127,7 +128,7 @@ async def test_collector_unreachable_marks_entities_unavailable(
     entry = await _make_entry(hass, aioclient_mock, snapshot)
 
     aioclient_mock.clear_requests()
-    aioclient_mock.get(URL, exc=Exception("connection refused"))
+    aioclient_mock.get(URL, exc=ClientConnectionError("connection refused"))
 
     coordinator = hass.data[DOMAIN][entry.entry_id]
     await coordinator.async_refresh()
@@ -137,6 +138,20 @@ async def test_collector_unreachable_marks_entities_unavailable(
     assert session.state == "unavailable"
     stale = _state_for(hass, entry, "stale")
     assert stale.state == "unavailable"
+
+
+async def test_section_not_ok_marks_only_that_sections_entities_unavailable(
+    hass: HomeAssistant, aioclient_mock, snapshot
+):
+    snapshot = json.loads(json.dumps(snapshot))
+    snapshot["openrouter"]["ok"] = False
+    entry = await _make_entry(hass, aioclient_mock, snapshot)
+
+    credits = _state_for(hass, entry, "openrouter_credits")
+    assert credits.state == "unavailable"
+
+    session = _state_for(hass, entry, "session_percent")
+    assert session.state == str(snapshot["claude"]["limits"][0]["percent"])
 
 
 async def test_options_flow_updates_scan_interval(hass: HomeAssistant, aioclient_mock, snapshot):

@@ -22,7 +22,7 @@ class TidemarkEntity(CoordinatorEntity[TidemarkCoordinator]):
         self._entry = entry
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
-            name=entry.title,
+            name="Tidemark",
             manufacturer="kmbrimble/claude-usage-widget",
             model="Tidemark collector",
         )
