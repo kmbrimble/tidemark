@@ -1,0 +1,294 @@
+{
+  "generated_at": "2026-09-16T03:15:18.789550725Z",
+  "claude": {
+    "ok": true,
+    "fetched_at": "2026-09-16T03:15:18.789550725Z",
+    "stale": false,
+    "limits": [
+      {
+        "kind": "session",
+        "group": "session",
+        "percent": 8,
+        "severity": "normal",
+        "resets_at": "2026-09-16T07:20:00.114668Z",
+        "is_active": false,
+        "window_seconds": 18000,
+        "pace_projected": 43.39,
+        "projected_end": 43.39,
+        "projected_basis": "pace",
+        "exhausts_in_seconds": null,
+        "series": [
+          {
+            "at": "2026-09-16T03:15:18.789550725Z",
+            "percent": 8
+          }
+        ],
+        "trend": {
+          "rate_per_hour": 2.14,
+          "sample_span_seconds": 1680,
+          "samples": 27,
+          "projected_at_reset": 16.74,
+          "exhausts_in_seconds": null
+        }
+      },
+      {
+        "kind": "weekly_all",
+        "group": "weekly",
+        "percent": 62,
+        "severity": "normal",
+        "resets_at": "2026-09-16T17:00:00.114685Z",
+        "is_active": true,
+        "window_seconds": 604800,
+        "pace_projected": 67.52,
+        "projected_end": 67.52,
+        "projected_basis": "pace",
+        "exhausts_in_seconds": null,
+        "series": [
+          {
+            "at": "2026-09-16T03:15:18.789550725Z",
+            "percent": 62
+          }
+        ],
+        "trend": {
+          "rate_per_hour": 0.33,
+          "sample_span_seconds": 43080,
+          "samples": 4610,
+          "projected_at_reset": 66.59,
+          "exhausts_in_seconds": null
+        }
+      },
+      {
+        "kind": "weekly_scoped",
+        "group": "weekly",
+        "percent": 15,
+        "severity": "normal",
+        "resets_at": "2026-09-16T17:00:00.114861Z",
+        "is_active": false,
+        "scope_model": "Fable",
+        "window_seconds": 604800,
+        "pace_projected": 16.34,
+        "projected_end": 16.34,
+        "projected_basis": "pace",
+        "exhausts_in_seconds": null,
+        "series": [
+          {
+            "at": "2026-09-16T03:15:18.789550725Z",
+            "percent": 15
+          }
+        ],
+        "trend": {
+          "rate_per_hour": 0,
+          "sample_span_seconds": 43080,
+          "samples": 4610,
+          "projected_at_reset": 15,
+          "exhausts_in_seconds": null
+        }
+      }
+    ],
+    "session": {
+      "kind": "session",
+      "group": "session",
+      "percent": 8,
+      "severity": "normal",
+      "resets_at": "2026-09-16T07:20:00.114668Z",
+      "is_active": false,
+      "window_seconds": 18000,
+      "pace_projected": 43.39,
+      "projected_end": 43.39,
+      "projected_basis": "pace",
+      "exhausts_in_seconds": null,
+      "series": [
+        {
+          "at": "2026-09-16T03:15:18.789550725Z",
+          "percent": 8
+        }
+      ],
+      "trend": {
+        "rate_per_hour": 2.14,
+        "sample_span_seconds": 1680,
+        "samples": 27,
+        "projected_at_reset": 16.74,
+        "exhausts_in_seconds": null
+      }
+    },
+    "weekly": {
+      "kind": "weekly_all",
+      "group": "weekly",
+      "percent": 62,
+      "severity": "normal",
+      "resets_at": "2026-09-16T17:00:00.114685Z",
+      "is_active": true,
+      "window_seconds": 604800,
+      "pace_projected": 67.52,
+      "projected_end": 67.52,
+      "projected_basis": "pace",
+      "exhausts_in_seconds": null,
+      "series": [
+        {
+          "at": "2026-09-16T03:15:18.789550725Z",
+          "percent": 62
+        }
+      ],
+      "trend": {
+        "rate_per_hour": 0.33,
+        "sample_span_seconds": 43080,
+        "samples": 4610,
+        "projected_at_reset": 66.59,
+        "exhausts_in_seconds": null
+      }
+    }
+  },
+  "openrouter": {
+    "ok": true,
+    "fetched_at": "2026-09-16T03:15:18.789550725Z",
+    "stale": false,
+    "account": {
+      "total_credits": 14.5,
+      "total_usage": 1.177369,
+      "remaining": 13.322631
+    },
+    "key": {
+      "limit": 10,
+      "usage": 1.177369,
+      "remaining": 8.822631,
+      "limit_reset": "monthly",
+      "usage_daily": 0,
+      "usage_weekly": 0.09098,
+      "usage_monthly": 1.177369
+    }
+  },
+  "agent": {
+    "ok": true,
+    "fetched_at": "2026-09-16T03:15:18.789550725Z",
+    "stale": false,
+    "currency": "AUD",
+    "fx_rate": 1.401626,
+    "fx_as_of": "2026-09-15T09:03:18.783694233Z",
+    "periods": [
+      {
+        "key": "today",
+        "label": "Today",
+        "tokens": {
+          "input": 1764,
+          "output": 502149,
+          "cache_read": 94018431,
+          "cache_write_5m": 448592,
+          "cache_write_1h": 3023799,
+          "messages": 783
+        },
+        "total_tokens": 97994735,
+        "cost_usd": 36.38,
+        "cost_local": 50.99,
+        "currency": "AUD",
+        "models": [
+          {
+            "model": "claude-sonnet-5",
+            "label": "Sonnet 5",
+            "total_tokens": 96816372,
+            "cost_usd": 35.71,
+            "cost_local": 50.05
+          },
+          {
+            "model": "claude-haiku-4-5-20251001",
+            "label": "Haiku 4.5",
+            "total_tokens": 1178363,
+            "cost_usd": 0.67,
+            "cost_local": 0.94
+          }
+        ]
+      },
+      {
+        "key": "week",
+        "label": "7 days",
+        "tokens": {
+          "input": 23338,
+          "output": 5440689,
+          "cache_read": 1687158710,
+          "cache_write_5m": 4773593,
+          "cache_write_1h": 28084874,
+          "messages": 8208
+        },
+        "total_tokens": 1725481204,
+        "cost_usd": 516.72,
+        "cost_local": 724.25,
+        "currency": "AUD",
+        "models": [
+          {
+            "model": "claude-sonnet-5",
+            "label": "Sonnet 5",
+            "total_tokens": 1706426319,
+            "cost_usd": 499.1,
+            "cost_local": 699.55
+          },
+          {
+            "model": "claude-opus-5",
+            "label": "Opus 5",
+            "total_tokens": 4587381,
+            "cost_usd": 11.36,
+            "cost_local": 15.92
+          },
+          {
+            "model": "claude-haiku-4-5-20251001",
+            "label": "Haiku 4.5",
+            "total_tokens": 14467504,
+            "cost_usd": 6.26,
+            "cost_local": 8.77
+          }
+        ]
+      },
+      {
+        "key": "month",
+        "label": "30 days",
+        "tokens": {
+          "input": 147183,
+          "output": 26376787,
+          "cache_read": 9334632229,
+          "cache_write_5m": 19896864,
+          "cache_write_1h": 135526104,
+          "messages": 42701
+        },
+        "total_tokens": 9516579167,
+        "cost_usd": 3068.84,
+        "cost_local": 4301.37,
+        "currency": "AUD",
+        "models": [
+          {
+            "model": "claude-sonnet-5",
+            "label": "Sonnet 5",
+            "total_tokens": 8741751494,
+            "cost_usd": 2458.06,
+            "cost_local": 3445.28
+          },
+          {
+            "model": "claude-opus-5",
+            "label": "Opus 5",
+            "total_tokens": 587955213,
+            "cost_usd": 453.73,
+            "cost_local": 635.96
+          },
+          {
+            "model": "claude-fable-5-1",
+            "label": "Fable 5.1",
+            "total_tokens": 65891389,
+            "cost_usd": 71.45,
+            "cost_local": 100.15
+          },
+          {
+            "model": "claude-fable-5",
+            "label": "Fable 5",
+            "total_tokens": 36065988,
+            "cost_usd": 62.09,
+            "cost_local": 87.03
+          },
+          {
+            "model": "claude-haiku-4-5-20251001",
+            "label": "Haiku 4.5",
+            "total_tokens": 84915083,
+            "cost_usd": 23.51,
+            "cost_local": 32.96
+          }
+        ]
+      }
+    ]
+  }
+}

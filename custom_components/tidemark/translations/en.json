@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "bearer_token": "Bearer token (optional)",
+          "scan_interval": "Scan interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the collector at that host and port."
+    },
+    "abort": {
+      "already_configured": "This collector is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Scan interval (seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "session_percent": { "name": "Session usage" },
+      "weekly_all_percent": { "name": "Weekly usage" },
+      "weekly_scoped_percent": { "name": "Weekly scoped usage" },
+      "session_time_to_limit": { "name": "Session time to limit" },
+      "weekly_all_time_to_limit": { "name": "Weekly time to limit" },
+      "weekly_scoped_time_to_limit": { "name": "Weekly scoped time to limit" },
+      "tokens_today": { "name": "Tokens today" },
+      "tokens_week": { "name": "Tokens this week" },
+      "tokens_month": { "name": "Tokens this month" },
+      "cost_today": { "name": "Cost today" },
+      "cost_week": { "name": "Cost this week" },
+      "cost_month": { "name": "Cost this month" },
+      "openrouter_credits": { "name": "OpenRouter credits remaining" },
+      "generated_at": { "name": "Snapshot generated at" }
+    },
+    "binary_sensor": {
+      "stale": { "name": "Snapshot stale" }
+    }
+  }
+}
