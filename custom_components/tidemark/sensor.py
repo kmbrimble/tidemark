@@ -227,6 +227,47 @@ class TidemarkLastUpdatedSensor(TidemarkEntity, SensorEntity):
         return parse_datetime(generated_at) if generated_at else None
 
 
+class TidemarkLoginDaysSensor(TidemarkEntity, SensorEntity):
+    """Days until the collector's credential can no longer be renewed.
+
+    The collector refreshes its own access token, but a login's
+    refreshTokenExpiresAt is fixed at login and is never extended by a refresh.
+    When it passes, the figures stop and only a person can restart them. This
+    countdown is the only advance warning there is.
+    """
+
+    _attr_native_unit_of_measurement = UnitOfTime.DAYS
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_translation_key = "login_days_remaining"
+
+    def __init__(self, coordinator: TidemarkCoordinator, entry: ConfigEntry) -> None:
+        super().__init__(coordinator, entry)
+        self._attr_unique_id = f"{entry.entry_id}_login_days_remaining"
+
+    def _login(self) -> dict[str, Any]:
+        return (self.coordinator.data or {}).get("claude", {}).get("login") or {}
+
+    @property
+    def available(self) -> bool:
+        # Deliberately NOT gated on the claude section being ok: this is the
+        # sensor that explains why the others are unavailable.
+        return super().available and self._login().get("days_remaining") is not None
+
+    @property
+    def native_value(self) -> float | None:
+        days = self._login().get("days_remaining")
+        return round(days, 1) if isinstance(days, (int, float)) else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        login = self._login()
+        return {
+            "expires_at": login.get("refresh_token_expires_at"),
+            "note": login.get("note"),
+            "expired": login.get("expired", False),
+        }
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
@@ -240,5 +281,6 @@ async def async_setup_entry(
         entities.append(TidemarkTokensSensor(coordinator, entry, period))
         entities.append(TidemarkCostSensor(coordinator, entry, period))
     entities.append(TidemarkOpenRouterCreditsSensor(coordinator, entry))
+    entities.append(TidemarkLoginDaysSensor(coordinator, entry))
 
     async_add_entities(entities)
