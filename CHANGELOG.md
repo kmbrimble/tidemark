@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## 0.2.0 - 2026-10-09
+
+Surface the collector's login countdown, so a credential that can no longer be
+renewed announces itself instead of just making every other entity go blank.
+
+- **`sensor.login_days_remaining`** — days until the collector's stored
+  credential reaches `refreshTokenExpiresAt`, with that timestamp, the
+  collector's note and an `expired` flag as attributes.
+- **`binary_sensor.login_needed`** (problem) — on inside the warning window or
+  once the credential has expired.
+- Both entities stay **available when the claude section is not ok**, unlike
+  every other claude entity. That is the point: when the figures have stopped,
+  this is the one thing that explains why and what to do.
+
+Why this exists: a login's `refreshTokenExpiresAt` is fixed at login and is
+never extended by refreshing the access token (measured 7 Sep vs 7 Oct 2026 —
+the same instant to the second). On 4 Oct it passed, Claude Code zeroed the
+credential, and session and weekly read `unavailable` for days with nothing
+saying why.
+
 ## 0.1.0 - 2026-09-16
 
 Full `custom_components/tidemark/` integration, implementing `kmbrimble/claude-usage-widget#9`:

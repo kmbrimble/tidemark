@@ -167,3 +167,69 @@ async def test_options_flow_updates_scan_interval(hass: HomeAssistant, aioclient
     assert entry.options[CONF_SCAN_INTERVAL] == 120
     coordinator = hass.data[DOMAIN][entry.entry_id]
     assert coordinator.update_interval.total_seconds() == 120
+
+
+async def test_login_countdown_is_reported(hass: HomeAssistant, aioclient_mock, snapshot):
+    """Days-until-re-login reaches HA with its context attached."""
+    snapshot = json.loads(json.dumps(snapshot))
+    snapshot["claude"]["login"] = {
+        "refresh_token_expires_at": "2026-11-05T03:43:39Z",
+        "days_remaining": 21.4,
+        "warning": False,
+        "expired": False,
+    }
+    entry = await _make_entry(hass, aioclient_mock, snapshot)
+
+    days = _state_for(hass, entry, "login_days_remaining")
+    assert days.state == "21.4"
+    assert days.attributes["expires_at"] == "2026-11-05T03:43:39Z"
+
+    needed = _state_for(hass, entry, "login_needed")
+    assert needed.state == "off"
+
+
+async def test_login_warning_survives_a_failed_claude_section(
+    hass: HomeAssistant, aioclient_mock, snapshot
+):
+    """The whole point: when the figures have stopped, this is what explains why.
+
+    Every other claude entity goes unavailable when the section is not ok. The
+    login entities must not, or the one piece of actionable information
+    disappears exactly when it is needed.
+    """
+    snapshot = json.loads(json.dumps(snapshot))
+    snapshot["claude"]["ok"] = False
+    snapshot["claude"]["login"] = {
+        "refresh_token_expires_at": "2026-10-08T03:43:39Z",
+        "days_remaining": -1.2,
+        "warning": True,
+        "expired": True,
+        "note": "login expired — figures cannot return until you log in again",
+    }
+    entry = await _make_entry(hass, aioclient_mock, snapshot)
+
+    session = _state_for(hass, entry, "session_percent")
+    assert session.state == "unavailable"
+
+    needed = _state_for(hass, entry, "login_needed")
+    assert needed.state == "on"
+    assert needed.attributes["expired"] is True
+    assert "log in" in needed.attributes["note"]
+
+    days = _state_for(hass, entry, "login_days_remaining")
+    assert days.state == "-1.2"
+
+
+async def test_absent_login_block_does_not_break_anything(
+    hass: HomeAssistant, aioclient_mock, snapshot
+):
+    """A collector too old to send the block, or one with nothing to report."""
+    snapshot = json.loads(json.dumps(snapshot))
+    snapshot["claude"].pop("login", None)
+    entry = await _make_entry(hass, aioclient_mock, snapshot)
+
+    days = _state_for(hass, entry, "login_days_remaining")
+    assert days.state == "unavailable"
+
+    needed = _state_for(hass, entry, "login_needed")
+    assert needed.state == "off"
