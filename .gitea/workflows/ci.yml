@@ -1,0 +1,26 @@
+name: CI
+
+# Gitea is the primary forge (GitHub is a read-only push mirror that only publishes releases). The job below is the
+# required status check on main ("CI / tests (pull_request)").
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+
+      # pytest-homeassistant-custom-component resolves a matching homeassistant core; current ones need Python 3.14,
+      # which uv fetches in a few seconds. (The dev container is on Python 3.11 and can only test against homeassistant 2024.3.3.)
+      - name: Python 3.14 venv with pytest-homeassistant-custom-component
+        run: |
+          set -euo pipefail
+          pip3 install -q --break-system-packages uv
+          uv venv --python 3.14 .venv
+          uv pip install --python .venv/bin/python pytest-homeassistant-custom-component
+
+      - name: Tests
+        run: .venv/bin/pytest tests/ -q

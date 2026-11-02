@@ -37,7 +37,21 @@ stale binary sensor), tested, deployed to the live HA instance, and released on 
 
 **This repo is public**, so HACS distribution as a custom repository is the target — no private-repo
 workaround needed. Kieren adds it in HACS as a custom repository pointing at this GitHub repo;
-HACS reads releases, so every version bump needs a matching tagged `gh release`.
+HACS reads GitHub Releases, so every version bump needs a matching tag, and the GitHub Release is now
+created by a workflow from the tag — see "Forge and releases".
+
+## Forge and releases (changed 2 Nov 2026)
+
+**Gitea is primary; GitHub is a read-only push mirror and must never be pushed to directly** (the mirror force-syncs and prunes refs;
+Gitea syncs on every push and every 10 minutes). Work on `https://git.kiztigs.com/kmbrimble/tidemark` (`origin`, gt credential helper);
+use `gt`, not `gh`, for issues and PRs. `main` is protected: PR + the green `CI / tests (pull_request)` check (`.gitea/workflows/ci.yml`:
+pytest-homeassistant-custom-component on Python 3.14); butler-bot merges its own green PRs. GitHub has Issues, Wiki, Projects, Discussions and PRs
+switched off, so `manifest.json`'s `issue_tracker` (a GitHub issues URL) points at a disabled page: fix it in the next version bump.
+**Release = tag on Gitea.** Bump `manifest.json` version and the `## X.Y.Z` section in `CHANGELOG.md` in a PR, merge it, then
+`git tag vX.Y.Z <merge-commit> && git push origin vX.Y.Z`. The mirror carries the tag to GitHub and `.github/workflows/release.yml` there creates the
+GitHub Release (notes = that CHANGELOG section); HACS picks it up. Nothing writes back to Gitea. A `vX.Y.Z-rc.N` tag is published as a GitHub *pre-release*
+(HACS ignores those unless "show beta" is on) and is how the pipeline is tested; the workflow can also be dispatched by hand on GitHub as a dry run.
+See the `forge-release` skill. `hacs.json` has no `zip_release`; if that is ever set the workflow refuses to run until it builds the zip.
 
 No brand icon: that needs a PR to the external `home-assistant/brands` repo, which isn't
 something a session here can do unattended. Revisit if wanted later.
@@ -74,7 +88,7 @@ don't hand-edit field names from memory.
 
 ## Deploy
 
-No CI. Live install is manual, following `/projects/ha-config/CLAUDE.md`'s API-not-browser
+CI is on Gitea (tests only). Live install is manual, following `/projects/ha-config/CLAUDE.md`'s API-not-browser
 discipline:
 
 1. Copy `custom_components/tidemark/` (excluding `__pycache__`) into `/ha-config/custom_components/`
@@ -94,5 +108,5 @@ There's no "backup and restore" step here (ha-config's constraint #1 backup rule
 an existing file; this adds a new directory) — state that plainly rather than pretending one
 applies.
 
-Per-version release (every bump, not just v0.1.0): bump `manifest.json` version, tag
-`vX.Y.Z`, `gh release create` with notes, then HACS picks it up on the next check.
+Per-version release (every bump, not just v0.1.0): bump `manifest.json` version and the CHANGELOG section, merge the PR on Gitea, tag
+`vX.Y.Z` on Gitea (not `gh release create`: the GitHub Release is created by the workflow from the mirrored tag), then HACS picks it up on the next check.

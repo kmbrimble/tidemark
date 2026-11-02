@@ -1,5 +1,7 @@
 # Tidemark
 
+> Development happens on a private forge; this repository is a read-only mirror. Releases are published here.
+
 A Home Assistant custom integration (domain `tidemark`) that reads the Claude usage collector
 already running on Unraid — `kmbrimble/claude-usage-widget`'s `collector/` service at
 `http://192.168.0.10:8766/usage` — and exposes its figures as Home Assistant sensors.
